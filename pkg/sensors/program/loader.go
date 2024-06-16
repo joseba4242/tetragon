@@ -869,7 +869,7 @@ func doLoadProgram(
 		var err error
 		var mapPath string
 		if pm, ok := load.PinMap[name]; ok {
-			mapPath = filepath.Join(bpfDir, pm.PinName)
+			mapPath = filepath.Join(bpfDir, pm.PinPath)
 		} else {
 			mapPath = filepath.Join(bpfDir, name)
 		}
