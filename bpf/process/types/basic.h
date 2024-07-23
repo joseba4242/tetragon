@@ -1578,6 +1578,8 @@ FUNC_INLINE int match_binaries(__u32 selidx)
 
 		switch (selector_options->op) {
 		case op_filter_in:
+			if (current->bin.mb_bitset & (1UL << selector_options->mbset_id))
+				return 1;
 		case op_filter_notin:
 			path_map = map_lookup_elem(&tg_mb_paths, &selidx);
 			if (!path_map)
