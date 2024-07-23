@@ -269,6 +269,26 @@ execve_rate(void *ctx)
 	return 0;
 }
 
+// update bitset mark
+FUNC_INLINE
+void update_mb_bitset(struct execve_map_value *curr)
+{
+	__u64 *bitsetp;
+	struct execve_map_value *parent;
+
+	parent = event_find_parent();
+	if (parent) {
+		// initialize bitset to parent's
+		curr->bin.mb_bitset = parent->bin.mb_bitset;
+	}
+
+	// check the map and see if the binary path matches a binary
+	// NB: Only the In operator is supported for now
+	bitsetp = map_lookup_elem(&tg_mbset_map, curr->bin.path);
+	if (bitsetp)
+		curr->bin.mb_bitset |= *bitsetp;
+}
+
 /**
  * execve_send() sends the collected execve event data.
  *
@@ -355,6 +375,8 @@ execve_send(void *ctx)
 			curr->bin.path_length--;
 		}
 #endif
+
+		update_mb_bitset(curr);
 	}
 
 	event->common.flags = 0;
